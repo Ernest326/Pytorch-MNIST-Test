@@ -12,6 +12,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
+import user_test
+
 
 #Define the device which we will use
 device = (
@@ -157,3 +159,5 @@ if __name__ == "__main__":
         if save_model:
             torch.save(model, "model")
             print("Model saved!")
+        
+        user_test.start_drawing()
