@@ -1,31 +1,46 @@
 from tkinter import *
+import tkinter as tk
 import torch
 
-global last_x, last_y
-app = Tk()
-app.geometry("500x500")
-canvas = Canvas(app, bg='gray10')
-text = Label(app, text="Guess: N/A", font=('Helvetica bold',24), anchor="n").pack(pady=5)
+class App(tk.Tk):
+    def __init__(self):
+        tk.Tk.__init__(self)
 
-def update_xy(event):
-    global last_x, last_y
-    last_x, last_y = event.x, event.y
+        self.x=0
+        self.y=0
+        self.button_held = False
 
-def draw(event):
-    global last_x, last_y
-    canvas.create_line((last_x, last_y, event.x, event.y), fill='white', width=5)
-    last_x, last_y = event.x, event.y
+        self.geometry("500x500")
+        self.canvas = tk.Canvas(self, bg='gray10')
+        self.text = tk.Label(self, text="Guess: N/A", font=('Helvetica bold', 24), anchor="n").pack(pady=5)
 
-def clear(event):
-    canvas.delete("all")
+        self.canvas.bind("<B1-Motion>", self.draw)
+        self.canvas.bind("<ButtonPress-1>", self.press)
+        self.canvas.bind("<ButtonRelease-1>", self.release)
+        self.canvas.bind("<ButtonPress-3>", self.clear)
 
-def start_drawing():
+        self.canvas.pack(anchor='nw', fill='both', expand=1)
 
-    canvas.pack(anchor='nw', fill='both', expand=1)
-    canvas.bind("<ButtonPress-1>", update_xy)
-    canvas.bind("<ButtonPress-3>", clear)
-    canvas.bind("<B1-Motion>", draw)
+    def press(self, event):
+        self.button_held = True
 
-    app.mainloop()
+    def release(self, event):
+        self.button_held = False
 
-start_drawing()
+    def clear(self, event):
+        self.canvas.delete("all")
+
+    def draw(self, event):
+        if self.button_held:
+            size=5
+            self.x = event.x
+            self.y = event.y
+            self.canvas.create_oval(self.x-size, self.y-size, self.x + size, self.y + size, fill="white", outline="white")
+
+    #def classify(self)
+
+def start_drawing_app():
+    app = App()
+    mainloop()
+
+start_drawing_app()
